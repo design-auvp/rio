@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itinerários - AUVP</title>
+  
+  <!-- Fontes AUVP: Anek Latin (Títulos/Valores) e Roboto (Textos/Labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Latin:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Ícones Phosphor (Substituindo Lucide) -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Configuração Tailwind da AUVP -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            auvp: {
+              DEFAULT: '#023619',
+              dark: '#011f0e',
+              light: '#f0fdf4'
+            }
+          },
+          fontFamily: {
+            anek: ['"Anek Latin"', 'sans-serif'],
+            roboto: ['Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-200 min-h-screen flex items-center justify-center p-4 font-roboto text-gray-800 antialiased selection:bg-auvp selection:text-white">
+
+  <!-- Container Principal (Design System AUVP: Card Branco, shadow-xl, rounded-2xl, max-w-md) -->
+  <div class="w-full max-w-md bg-white shadow-xl rounded-2xl overflow-hidden flex flex-col min-h-[550px] relative border border-gray-100">
+    
+    <!-- Cabeçalho Institucional -->
+    <div class="bg-auvp p-6 text-white text-center relative z-10">
+      <h1 class="font-anek font-bold text-2xl tracking-wide flex items-center justify-center gap-2">
+        <i class="ph ph-ticket text-3xl"></i> Meus Itinerários
+      </h1>
+      <p class="font-roboto font-light text-sm text-green-100 mt-1 opacity-90">
+        Consulta rápida de voos e transfers
+      </p>
+    </div>
+
+    <!-- Área de Busca -->
+    <div class="p-6 pb-2 relative z-20">
+      <div class="relative">
+        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
+        <!-- Input Financeiro / Busca (bg-gray-50, rounded-xl) -->
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Digite seu nome..." 
+          class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-12 py-4 font-roboto font-normal text-gray-800 focus:outline-none focus:ring-2 focus:ring-auvp focus:bg-white transition-all shadow-sm placeholder-gray-400 text-lg"
+          autocomplete="off"
+        >
+        <button id="clearBtn" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-auvp transition-colors hidden">
+          <i class="ph ph-x-circle text-2xl"></i>
+        </button>
+        
+        <!-- Dropdown de Resultados -->
+        <div id="dropdown" class="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hidden max-h-60 overflow-y-auto z-50">
+          <!-- Resultados dinâmicos -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados do Itinerário (Ticket) -->
+    <div id="ticketContainer" class="p-6 flex-1 overflow-y-auto hidden scroll-smooth">
+      <!-- O Ticket HTML será renderizado aqui -->
+    </div>
+
+    <!-- Estado Inicial / Vazio -->
+    <div id="emptyState" class="p-6 flex-1 flex flex-col items-center justify-center text-center opacity-60">
+      <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+        <i class="ph ph-map-trifold text-4xl text-gray-400"></i>
+      </div>
+      <p class="font-roboto text-gray-500 max-w-[250px]">
+        Pesquise seu nome acima para visualizar os detalhes da sua viagem.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // DADOS DETALHADOS (Extraídos das Imagens)
+    // Insira novos passageiros completos aqui no futuro
+    // ==========================================
+    const DETAILED_DATA = [
+      ...[
+        "Alan Dias Pimentel",
+        "Alessandro Manoel Patrocinio",
+        "Ana Beatriz de Melo Lima",
+        "Ana Carolina Miranda de Souza",
+        "Ana Júlia Malta de Freitas",
+        "Armando Custodio Neto",
+        "Bianca Parreira Torres",
+        "Bolívar Luiz Pereira D Oliveira",
+        "Bruna Lima Lopes",
+        "Caio Felipe Gonçalves Borba",
+        "Cairo Roberto dos Santos Batista Filho",
+        "Daniel Bandeira Azevedo e Silva",
+        "Danilo Carlos de Oliveira Rosa",
+        "Ester Figueredo Nolêto",
+        "Giovanna Lissa Weber"
+      ].map(name => ({
+        nomeOriginal: name,
+        onibus: {
+          gynParaAero: "01:00 (09/04)",
+          aeroParaHotel: "10:00 (09/04)",
+          hotelParaAero: "" // Aguardando horário de retorno
+        },
+        vooIda: {
+          localizador: "AJPCTM",
+          data: "09 de Abril",
+          trechos: [
+            { origem: "GYN", destino: "VCP", voo: "AD 2924", cia: "Azul", saida: "05:25", chegada: "06:55" },
+            { origem: "VCP", destino: "SDU", voo: "AD 4049", cia: "Azul", saida: "08:00", chegada: "09:05" }
+          ]
+        },
+        vooVolta: {
+          localizador: "AJPCTM",
+          data: "14 de Abril",
+          trechos: [
+            { origem: "SDU", destino: "VCP", voo: "AD 4104", cia: "Azul", saida: "19:15", chegada: "20:45" },
+            { origem: "VCP", destino: "GYN", voo: "AD 2925", cia: "Azul", saida: "23:55", chegada: "01:30 (+1d)" }
+          ]
+        }
+      })),
+      ...[
+        "Guilherme de Melo Godoy",
+        "Barbara Martins Paulino",
+        "Barbara Silva Soares",
+        "Camila Emily Wanderley da Silva"
+      ].map(name => ({
+        nomeOriginal: name,
+        onibus: {
+          gynParaAero: "01:00 (09/04)",
+          aeroParaHotel: "", // Pode atualizar com o horário específico deste grupo
+          hotelParaAero: ""
+        },
+        vooIda: {
+          localizador: "NNVLVD",
+          data: "09 de Abril",
+          trechos: [
+            { origem: "BSB", destino: "VCP", voo: "AD 2629", cia: "Azul", saida: "06:05", chegada: "07:45" },
+            { origem: "VCP", destino: "SDU", voo: "AD 4192", cia: "Azul", saida: "09:10", chegada: "10:15" }
+          ]
+        },
+        vooVolta: {
+          localizador: "NNVLVD",
+          data: "14 de Abril",
+          trechos: [
+            { origem: "SDU", destino: "VCP", voo: "AD 4104", cia: "Azul", saida: "19:15", chegada: "20:45" },
+            { origem: "VCP", destino: "BSB", voo: "AD 2652", cia: "Azul", saida: "22:45", chegada: "00:30 (+1d)" }
+          ]
+        }
+      }))
+    ];
+
+    // ==========================================
+    // DADOS DAS PLANILHAS (Hardcoded de Segurança)
+    // ==========================================
+    const DATA_DEMAIS_LOCALIDADES = `Nome,Localizador IDA,Localizador Volta,Horário onibus - saída rj
+Isabelle Fernandes Silva,AYOFAD,,
+Pedro Souto Shamá Santos,BKWPWZ,,
+Bruna Roberta Andryeiak,BN8BNQ,QLMASJ,
+Debora Sanders Bolonhini,BN8BNQ,KIQKDV,
+Leandra de Paula Morais Silva,DOWAQQ,,
+Paulo Ramos de Brito Machado,FABQKY,,
+Adriano Luiz Odahara Umemura,FCIJNC,,
+Carlos Miguel Araujo de Lima,FCIJNC,,
+Gabriel Bastos Dammann,FCIJNC,,
+Gustavo Gomes Balbino,FCIJNC,,
+Hiago Felipe de Araújo Sousa,FCIJNC,,
+Thiago Nery de Oliveira Hernández,FCIJNC,,
+Mauricio Pereira Imparato,GSSTUB,,
+Bruna Alencar Rodrigues,HIDTTU,CGS45F,
+Julhia Vieira dos Santos,HIDTTU,,
+Kaique Maciel Castro,HIDTTU,,
+Lídia Sousa Magalhães Alves,HIDTTU,CGS45F,
+Marcela Luzinete Lima da Silva,HIDTTU,,
+Abner Martins da Silva,HYSGGU,,
+Arthur Berti Petersen Scholze,HYSGGU,,
+Claúdio Junior da Silva,HYSGGU,,
+Diana Luiza Horlle,HYSGGU,,
+Rodrigo Ruas Rumi,HYSGGU,,
+Erika Kettelyn Leite Barreto,IJCLNP,,
+Gabriela Albuquerque Da Silva,IJCLNP,,
+Iago Bier do Amaral,IJCLNP,,
+Jefferson Rocha Silveira,IJCLNP,,
+Leunam Souza De Jesus,IJCLNP,,
+Arthur Miranda e Silva,KM2NUW,,
+Bruno Avelar Barra,KM2NUW,,
+Caio Rodrigues Borges,KM2NUW,,
+Danilo Miranda Barbosa,KM2NUW,,
+Hugo Maximiano Oliveira Jesus,KM2NUW,,
+Érika Moura Félix Bergsten,KMJEEW,,
+Antônio Nojikoski Júnior,NAHHOT,NAHHOT,
+Andreia Luiza Aciole Vanderlei Pereira,PJDIFP,,
+Adalberto José da Rocha Neto,PJDIFP,,
+Caue de Oliveira Matos,PJDIFP,,
+Daniela de Araújo Cavalcante,PJDIFP,,
+Dayanny Machado de Melo Moreira,PJDIFP,,
+Francinilda Alves Braz,,`;
+
+    const DATA_BRASILIA_GERAL = `,Nome,Confirmação,Voos,Horário onibus - saída de Gyn madrugada do dia 09/04,Horário do voo,Localizador ,Nº do voo ida,Companhia aerea ida,Nº do voo volta,Localizador ,Companhia aerea volta
+1,Barbara Martins Paulino,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
+2,Barbara Silva Soares,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
+3,Camila Emily Wanderley da Silva ,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
+4,Daniel da Silva Machado ,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
+5,Evander Robert Gonçalves Elias,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
+6,Guilherme de Melo Godoy,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL`;
+
+    const DATA_AERO_HOTEL = `,Nome,Horário Onibus para hotel ,Localizador IDA ,Localizador  Volta
+11,Cairo Roberto dos Santos Batista Filho,10:00:00,AJPCTM,
+12,Daniel Bandeira Azevedo e Silva,10:00:00,AJPCTM,
+13,Danilo Carlos de Oliveira Rosa,10:00:00,AJPCTM,
+14,Ester Figueredo Nolêto,10:00:00,AJPCTM,
+15,Giovanna Lissa Weber,10:00:00,AJPCTM,
+164,Andreia Luiza Aciole Vanderlei Pereira ,10:00:00,PJDIFP,
+165,Adalberto José da Rocha Neto,10:00:00,PJDIFP,
+166,Caue de Oliveira Matos,10:00:00,PJDIFP,
+167,Daniela de Araújo Cavalcante ,10:00:00,PJDIFP,
+168,Dayanny Machado de Melo Moreira,10:00:00,PJDIFP,
+169,Francinilda Alves Braz,10:00:00,PJDIFP,
+170,Guilherme Martins Alencar Rodrigues,10:00:00,PJDIFP,
+171,Gustavo Alves de Oliveira ,10:00:00,PJDIFP,
+172,Kaique Rabelo Ribeiro,10:00:00,PJDIFP,
+173,Larissa Vasconcelos Correia,10:00:00,PJDIFP,
+174,Lilian Silva Araújo,10:00:00,PJDIFP,
+175,Maria Lindalva dos Santos Silva,10:00:00,PJDIFP,
+176,Matheus Malheiros Pinto,10:00:00,PJDIFP,
+177,Raphael Pereira de Oliveira ,10:00:00,PJDIFP,
+178,Thaiene Vieira,10:00:00,PJDIFP,`;
+
+    // ==========================================
+    // LÓGICA E ESTADO
+    // ==========================================
+    let database = [];
+    let selectedUser = null;
+
+    const normalizeName = (name) => {
+      if (!name) return '';
+      return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    };
+
+    const splitCsvLine = (line) => {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') inQuotes = !inQuotes;
+        else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else current += char;
+      }
+      result.push(current.trim());
+      return result;
+    };
+
+    const findColumnIndex = (headers, keywords) => {
+      for (let i = 0; i < headers.length; i++) {
+        const headerTitle = headers[i].toLowerCase();
+        if (keywords.some(kw => headerTitle.includes(kw.toLowerCase()))) return i;
+      }
+      return -1;
+    };
+
+    // Inicialização da Base Mesclando CSVs Antigos com os Detalhados
+    const initDatabase = () => {
+      const usersMap = new Map();
+
+      const getUserObj = (rawName) => {
+        const key = normalizeName(rawName);
+        if (!key) return null;
+        if (!usersMap.has(key)) {
+          usersMap.set(key, { 
+            nomeOriginal: rawName, key: key, vooIda: {}, vooVolta: {}, onibus: {} 
+          });
+        }
+        return usersMap.get(key);
+      };
+
+      // 1. Processa os CSVs (Base Legacy)
+      const processCSVText = (csvText) => {
+        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
+        if (lines.length < 2) return;
+
+        const headers = splitCsvLine(lines[0]);
+        const idxNome = findColumnIndex(headers, ['nome', 'name']);
+        if (idxNome === -1) return;
+
+        const maps = {
+          locIda: findColumnIndex(headers, ['localizador ida', 'localizador', 'loc ida']),
+          vooIda: findColumnIndex(headers, ['nº do voo ida', 'voo ida']),
+          ciaIda: findColumnIndex(headers, ['companhia aerea ida', 'cia ida']),
+          horarioIda: findColumnIndex(headers, ['horário do voo', 'horario voo']),
+          locVolta: findColumnIndex(headers, ['localizador volta', 'loc volta']),
+          vooVolta: findColumnIndex(headers, ['nº do voo volta', 'voo volta']),
+          ciaVolta: findColumnIndex(headers, ['companhia aerea volta', 'cia volta']),
+          onibusGyn: findColumnIndex(headers, ['horário onibus - saída de gyn', 'saída de gyn']),
+          onibusAeroHotel: findColumnIndex(headers, ['horário onibus para hotel', 'para hotel']),
+          onibusHotelAero: findColumnIndex(headers, ['horário onibus - saída rj', 'saída rj'])
+        };
+
+        for (let i = 1; i < lines.length; i++) {
+          const row = splitCsvLine(lines[i]);
+          const user = getUserObj(row[idxNome]);
+          if (!user) continue;
+
+          if (maps.locIda !== -1 && row[maps.locIda]) user.vooIda.localizador = row[maps.locIda];
+          if (maps.vooIda !== -1 && row[maps.vooIda]) user.vooIda.numero = row[maps.vooIda];
+          if (maps.ciaIda !== -1 && row[maps.ciaIda]) user.vooIda.cia = row[maps.ciaIda];
+          if (maps.horarioIda !== -1 && row[maps.horarioIda]) user.vooIda.horario = row[maps.horarioIda];
+          
+          if (maps.locVolta !== -1 && row[maps.locVolta]) user.vooVolta.localizador = row[maps.locVolta];
+          if (maps.vooVolta !== -1 && row[maps.vooVolta]) user.vooVolta.numero = row[maps.vooVolta];
+          if (maps.ciaVolta !== -1 && row[maps.ciaVolta]) user.vooVolta.cia = row[maps.ciaVolta];
+          
+          if (maps.onibusGyn !== -1 && row[maps.onibusGyn]) user.onibus.gynParaAero = row[maps.onibusGyn];
+          if (maps.onibusAeroHotel !== -1 && row[maps.onibusAeroHotel]) user.onibus.aeroParaHotel = row[maps.onibusAeroHotel];
+          if (maps.onibusHotelAero !== -1 && row[maps.onibusHotelAero]) user.onibus.hotelParaAero = row[maps.onibusHotelAero];
+        }
+      };
+
+      [DATA_DEMAIS_LOCALIDADES, DATA_BRASILIA_GERAL, DATA_AERO_HOTEL].forEach(processCSVText);
+
+      // 2. Sobrescreve com os Dados Detalhados (As Imagens)
+      DETAILED_DATA.forEach(detalhado => {
+        const key = normalizeName(detalhado.nomeOriginal);
+        // Sobrescreve ou cria o novo
+        usersMap.set(key, {
+          nomeOriginal: detalhado.nomeOriginal,
+          key: key,
+          onibus: detalhado.onibus,
+          vooIda: detalhado.vooIda,
+          vooVolta: detalhado.vooVolta
+        });
+      });
+
+      database = Array.from(usersMap.values()).sort((a, b) => a.nomeOriginal.localeCompare(b.nomeOriginal));
+    };
+
+    // ==========================================
+    // INTERAÇÃO NA TELA (UI/DOM)
+    // ==========================================
+    const searchInput = document.getElementById('searchInput');
+    const dropdown = document.getElementById('dropdown');
+    const clearBtn = document.getElementById('clearBtn');
+    const ticketContainer = document.getElementById('ticketContainer');
+    const emptyState = document.getElementById('emptyState');
+
+    const handleSearch = (e) => {
+      const query = normalizeName(e.target.value);
+      if (query.length === 0) {
+        clearBtn.classList.add('hidden');
+        dropdown.classList.add('hidden');
+        if(!selectedUser) showEmptyState();
+        return;
+      }
+      clearBtn.classList.remove('hidden');
+      const filtered = database.filter(u => u.key.includes(query)).slice(0, 5);
+
+      if (filtered.length > 0) {
+        dropdown.innerHTML = filtered.map(user => `
+          <button onclick="selectUser('${user.key}')" class="w-full text-left px-5 py-4 hover:bg-gray-50 flex items-center justify-between border-b border-gray-100 last:border-0 transition-colors">
+            <span class="font-roboto font-normal text-gray-800">${user.nomeOriginal}</span>
+            <i class="ph ph-caret-right text-gray-300"></i>
+          </button>
+        `).join('');
+        dropdown.classList.remove('hidden');
+      } else {
+        dropdown.innerHTML = `<div class="px-5 py-4 text-gray-500 font-roboto text-sm text-center">Nenhum passageiro encontrado.</div>`;
+        dropdown.classList.remove('hidden');
+      }
+    };
+
+    const showEmptyState = () => {
+      ticketContainer.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+      selectedUser = null;
+    };
+
+    window.selectUser = (key) => {
+      selectedUser = database.find(u => u.key === key);
+      searchInput.value = selectedUser.nomeOriginal;
+      dropdown.classList.add('hidden');
+      renderTicket(selectedUser);
+    };
+
+    const clearSearch = () => {
+      searchInput.value = '';
+      dropdown.classList.add('hidden');
+      clearBtn.classList.add('hidden');
+      showEmptyState();
+      searchInput.focus();
+    };
+
+    // ==========================================
+    // TEMPLATE DO TICKET (Design System AUVP + Suporte a Conexões)
+    // ==========================================
+    const renderTicket = (user) => {
+      emptyState.classList.add('hidden');
+      
+      let html = `
+        <div class="mb-5">
+          <p class="font-roboto font-light text-xs text-gray-400 uppercase tracking-widest mb-1">Passageiro</p>
+          <h2 class="font-anek font-bold text-2xl text-auvp leading-tight">${user.nomeOriginal}</h2>
+        </div>
+        <div class="space-y-4">
+      `;
+
+      const createStep = (icon, title, detailsHtml) => `
+        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 shadow-sm relative group overflow-hidden">
+          <div class="absolute left-0 top-0 bottom-0 w-1 bg-auvp opacity-80"></div>
+          <div class="flex gap-4 items-start">
+            <div class="bg-green-50 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-auvp">
+              <i class="ph ${icon} text-xl"></i>
+            </div>
+            <div class="flex-1 w-full overflow-hidden">
+              <h3 class="font-anek font-semibold text-[17px] text-gray-800 leading-none mb-3">${title}</h3>
+              ${detailsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Helper para montar HTML de voos com ou sem "Trechos Detalhados"
+      const renderFlightDetails = (voo) => {
+        // Se tiver o formato novo detalhado (com array de conexões)
+        if (voo.trechos && voo.trechos.length > 0) {
+          let detalhes = `
+            <div class="flex justify-between items-center mb-3">
+               <p class="font-roboto text-xs text-gray-500 uppercase">Loc: <strong class="text-auvp text-sm tracking-wide ml-1">${voo.localizador}</strong></p>
+               <p class="font-roboto text-xs text-gray-500 uppercase">Data: <strong class="text-gray-800 text-sm ml-1">${voo.data || ''}</strong></p>
+            </div>
+            <div class="relative pl-4 border-l-2 border-dashed border-gray-200 space-y-4 ml-1">`;
+          
+          voo.trechos.forEach(t => {
+            detalhes += `
+              <div class="relative">
+                <div class="absolute -left-[21px] top-[6px] bg-white border-[3px] border-auvp w-[14px] h-[14px] rounded-full"></div>
+                <div class="flex justify-between items-start">
+                   <div>
+                       <p class="font-anek font-bold text-lg text-gray-800 leading-none flex items-center gap-1.5">
+                         ${t.origem} <i class="ph ph-arrow-right text-gray-400 text-sm"></i> ${t.destino}
+                       </p>
+                       <p class="font-roboto text-xs text-gray-500 mt-1">${t.cia} - ${t.voo}</p>
+                   </div>
+                   <div class="text-right">
+                       <p class="font-roboto font-semibold text-gray-800 leading-none text-sm">${t.saida} <span class="font-light text-gray-400 mx-0.5">/</span> ${t.chegada}</p>
+                   </div>
+                </div>
+              </div>
+            `;
+          });
+          detalhes += `</div>`;
+          return detalhes;
+        } 
+        
+        // Se for o formato antigo (CSV Simples)
+        let detalhes = `<div class="flex items-center justify-between gap-2 border-b border-gray-200 border-dashed pb-2">`;
+        detalhes += `<div>
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase">Localizador</p>
+            <p class="font-anek font-bold text-xl text-auvp uppercase tracking-wide mt-0.5">${voo.localizador || '---'}</p>
+          </div>`;
+        if (voo.horario) {
+          detalhes += `<div class="text-right">
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase">Horário</p>
+            <p class="font-roboto font-medium text-gray-800 flex items-center justify-end gap-1 mt-0.5">
+              <i class="ph ph-clock text-gray-400"></i> ${voo.horario}
+            </p>
+          </div>`;
+        }
+        detalhes += `</div>`;
+        if (voo.cia || voo.numero) {
+          detalhes += `<div class="mt-2">
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase">Voo / Cia Aérea</p>
+            <p class="font-roboto font-medium text-gray-800 mt-0.5">${voo.cia || ''} ${voo.numero ? `(${voo.numero})` : ''}</p>
+          </div>`;
+        }
+        return detalhes;
+      };
+
+      // 1. Ônibus GYN -> Aero
+      if (user.onibus?.gynParaAero) {
+        html += createStep('ph-bus', 'Ônibus de Origem', `
+          <div>
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5">Partida p/ Aeroporto</p>
+            <p class="font-roboto font-medium text-gray-800 flex items-center gap-1.5">
+              <i class="ph ph-clock text-auvp"></i> ${user.onibus.gynParaAero}
+            </p>
+          </div>
+        `);
+      }
+
+      // 2. Voo de Ida
+      if (user.vooIda?.localizador || user.vooIda?.horario || user.vooIda?.trechos) {
+        html += createStep('ph-airplane-takeoff', 'Voo de Ida', renderFlightDetails(user.vooIda));
+      }
+
+      // 3. Transfer Chegada
+      if (user.onibus?.aeroParaHotel) {
+        html += createStep('ph-map-pin', 'Transfer Chegada', `
+          <div>
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5">Aeroporto ➔ Hotel (RJ)</p>
+            <p class="font-roboto font-medium text-gray-800 flex items-center gap-1.5">
+              <i class="ph ph-clock text-auvp"></i> ${user.onibus.aeroParaHotel}
+            </p>
+          </div>
+        `);
+      }
+
+      // 4. Transfer Retorno
+      if (user.onibus?.hotelParaAero) {
+        html += createStep('ph-map-pin', 'Transfer Retorno', `
+          <div>
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5">Hotel (RJ) ➔ Aeroporto</p>
+            <p class="font-roboto font-medium text-gray-800 flex items-center gap-1.5">
+              <i class="ph ph-clock text-auvp"></i> ${user.onibus.hotelParaAero}
+            </p>
+          </div>
+        `);
+      }
+
+      // 5. Voo de Volta
+      if (user.vooVolta?.localizador || user.vooVolta?.trechos) {
+        html += createStep('ph-airplane-landing', 'Voo de Volta', renderFlightDetails(user.vooVolta));
+      }
+
+      // Fallback Vazio
+      if (Object.keys(user.vooIda).length === 0 && Object.keys(user.vooVolta).length === 0 && Object.keys(user.onibus).length === 0) {
+        html += `
+          <div class="text-center p-6 bg-gray-50 rounded-xl border border-gray-100">
+            <p class="font-roboto text-gray-500 text-sm">Nenhum detalhe de viagem localizado ainda.</p>
+          </div>
+        `;
+      }
+
+      // Botão Limpar Busca (Padrão Arredondado AUVP)
+      html += `
+        <button onclick="clearSearch()" class="w-full mt-6 bg-auvp hover:bg-auvp-dark text-white rounded-xl py-3.5 font-anek font-semibold text-lg flex items-center justify-center gap-2 transition-colors shadow-md">
+          <i class="ph ph-magnifying-glass"></i> Nova Consulta
+        </button>
+      </div>`;
+
+      ticketContainer.innerHTML = html;
+      ticketContainer.classList.remove('hidden');
+    };
+
+    // Inicializadores
+    searchInput.addEventListener('input', handleSearch);
+    clearBtn.addEventListener('click', clearSearch);
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.add('hidden');
+    });
+
+    initDatabase();
+  </script>
+</body>
+</html>

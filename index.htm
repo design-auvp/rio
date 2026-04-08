@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +8,15 @@
   <!-- Fontes AUVP: Anek Latin (Títulos/Valores) e Roboto (Textos/Labels) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anek+Latin:wght@600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Latin:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Ícones Phosphor (Substituindo Lucide) -->
+  <!-- Ícones Phosphor -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-  <!-- Configuração Tailwind da AUVP -->
+  <!-- Configuração Tailwind da AUVP e Estilos Customizados -->
   <script>
     tailwind.config = {
       theme: {
@@ -36,66 +36,97 @@
       }
     }
   </script>
+  <style>
+    /* Scrollbar personalizada para um aspeto mais limpo */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+  </style>
 </head>
-<body class="bg-gray-200 min-h-screen flex items-center justify-center p-4 font-roboto text-gray-800 antialiased selection:bg-auvp selection:text-white">
+<body class="bg-gray-200 min-h-screen flex items-center justify-center p-0 lg:p-6 font-roboto text-gray-800 antialiased selection:bg-auvp selection:text-white">
 
-  <!-- Container Principal (Design System AUVP: Card Branco, shadow-xl, rounded-2xl, max-w-md) -->
-  <div class="w-full max-w-md bg-white shadow-xl rounded-2xl overflow-hidden flex flex-col min-h-[550px] relative border border-gray-100">
+  <!-- Container Principal (Responsivo: Mobile -> Fullscreen/Max-w-md, Desktop -> 2 Colunas) -->
+  <div class="w-full h-screen lg:h-[85vh] lg:min-h-[600px] lg:max-h-[850px] max-w-md lg:max-w-5xl bg-white lg:shadow-2xl lg:rounded-2xl overflow-hidden flex flex-row relative border-0 lg:border border-gray-100">
     
-    <!-- Cabeçalho Institucional -->
-    <div class="bg-auvp p-6 text-white text-center relative z-10">
-      <h1 class="font-anek font-bold text-2xl tracking-wide flex items-center justify-center gap-2">
-        <i class="ph ph-ticket text-3xl"></i> Meus Itinerários
-      </h1>
-      <p class="font-roboto font-light text-sm text-green-100 mt-1 opacity-90">
-        Consulta rápida de voos e transfers
-      </p>
-    </div>
+    <!-- LEFT PANEL (Sidebar: Pesquisa e Lista) -->
+    <div id="leftPanel" class="flex flex-col w-full lg:w-[380px] h-full shrink-0 bg-white border-r border-gray-100 relative z-20">
+      
+      <!-- Cabeçalho Institucional -->
+      <div class="bg-auvp p-6 text-white text-left relative z-20 shadow-md shrink-0">
+        <h1 class="font-anek font-bold text-2xl tracking-wide">
+          Os Meus Itinerários
+        </h1>
+        <p class="font-roboto font-light text-sm text-green-100 mt-1 opacity-90">
+          Consulta rápida de voos e transfers
+        </p>
+      </div>
 
-    <!-- Área de Busca -->
-    <div class="p-6 pb-2 relative z-20">
-      <div class="relative">
-        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
-        <!-- Input Financeiro / Busca (bg-gray-50, rounded-xl) -->
-        <input 
-          type="text" 
-          id="searchInput" 
-          placeholder="Digite seu nome..." 
-          class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-12 py-4 font-roboto font-normal text-gray-800 focus:outline-none focus:ring-2 focus:ring-auvp focus:bg-white transition-all shadow-sm placeholder-gray-400 text-lg"
-          autocomplete="off"
-        >
-        <button id="clearBtn" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-auvp transition-colors hidden">
-          <i class="ph ph-x-circle text-2xl"></i>
-        </button>
-        
-        <!-- Dropdown de Resultados -->
-        <div id="dropdown" class="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hidden max-h-60 overflow-y-auto z-50">
-          <!-- Resultados dinâmicos -->
+      <!-- Área de Pesquisa -->
+      <div class="p-5 pb-0 relative z-30 bg-white shrink-0">
+        <div class="relative">
+          <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
+          <!-- Input Financeiro / Pesquisa -->
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Pesquise pelo seu nome..." 
+            class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-12 py-3.5 font-roboto font-normal text-gray-800 focus:outline-none focus:ring-2 focus:ring-auvp focus:bg-white transition-all shadow-sm placeholder-gray-400 text-base"
+            autocomplete="off"
+          >
+          <button id="clearBtn" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-auvp transition-colors hidden">
+            <i class="ph ph-x-circle text-2xl"></i>
+          </button>
+          
+          <!-- Dropdown de Resultados -->
+          <div id="dropdown" class="absolute top-full left-0 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hidden max-h-60 overflow-y-auto z-50">
+            <!-- Resultados dinâmicos -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado Inicial / Lista de Colaboradores -->
+      <div class="flex-1 flex flex-col bg-white overflow-hidden mt-3">
+        <div class="px-6 py-3 border-y border-gray-100 flex items-center gap-2 bg-gray-50/80 shrink-0">
+          <i class="ph ph-users text-auvp text-xl"></i>
+          <h2 class="font-anek font-bold text-[17px] text-gray-800 tracking-wide">
+            Lista de Colaboradores
+          </h2>
+        </div>
+        <!-- Lista Dinâmica de todos os nomes -->
+        <div id="allUsersList" class="flex-1 overflow-y-auto pb-4 relative">
+          <!-- Renderizado via JS -->
         </div>
       </div>
     </div>
 
-    <!-- Resultados do Itinerário (Ticket) -->
-    <div id="ticketContainer" class="p-6 flex-1 overflow-y-auto hidden scroll-smooth">
-      <!-- O Ticket HTML será renderizado aqui -->
-    </div>
-
-    <!-- Estado Inicial / Vazio -->
-    <div id="emptyState" class="p-6 flex-1 flex flex-col items-center justify-center text-center opacity-60">
-      <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-        <i class="ph ph-map-trifold text-4xl text-gray-400"></i>
+    <!-- RIGHT PANEL (Detalhes do Itinerário) -->
+    <!-- Escondido em mobile por defeito (max-lg:hidden), visível sempre no desktop -->
+    <div id="rightPanel" class="max-lg:hidden flex flex-col flex-1 h-full bg-gray-50/50 relative z-10 overflow-hidden w-full">
+      
+      <!-- Resultados do Itinerário (Ticket) -->
+      <div id="ticketContainer" class="p-5 lg:p-8 flex-1 overflow-y-auto hidden scroll-smooth w-full">
+        <!-- O Ticket HTML será renderizado aqui -->
       </div>
-      <p class="font-roboto text-gray-500 max-w-[250px]">
-        Pesquise seu nome acima para visualizar os detalhes da sua viagem.
-      </p>
+
+      <!-- Estado Inicial / Vazio (Mostrado no Desktop quando nada está selecionado) -->
+      <div id="emptyState" class="flex-1 flex flex-col items-center justify-center text-center opacity-60 p-6">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-5 shadow-inner">
+          <i class="ph ph-map-trifold text-5xl text-gray-400"></i>
+        </div>
+        <h3 class="font-anek font-bold text-xl text-gray-700 mb-2">Pronto para embarcar?</h3>
+        <p class="font-roboto text-gray-500 max-w-[300px]">
+          Pesquise ou selecione o seu nome na lista para visualizar os detalhes completos da sua viagem.
+        </p>
+      </div>
+
     </div>
 
   </div>
 
   <script>
     // ==========================================
-    // DADOS DETALHADOS (Extraídos das Imagens)
-    // Insira novos passageiros completos aqui no futuro
+    // DADOS DETALHADOS (Mantidos Intactos)
     // ==========================================
     const DETAILED_DATA = [
       ...[
@@ -119,7 +150,7 @@
         onibus: {
           gynParaAero: "01:00 (09/04)",
           aeroParaHotel: "10:00 (09/04)",
-          hotelParaAero: "" // Aguardando horário de retorno
+          hotelParaAero: ""
         },
         vooIda: {
           localizador: "AJPCTM",
@@ -131,7 +162,7 @@
         },
         vooVolta: {
           localizador: "AJPCTM",
-          data: "14 de Abril",
+          data: "12 de Abril",
           trechos: [
             { origem: "SDU", destino: "VCP", voo: "AD 4104", cia: "Azul", saida: "19:15", chegada: "20:45" },
             { origem: "VCP", destino: "GYN", voo: "AD 2925", cia: "Azul", saida: "23:55", chegada: "01:30 (+1d)" }
@@ -147,7 +178,7 @@
         nomeOriginal: name,
         onibus: {
           gynParaAero: "01:00 (09/04)",
-          aeroParaHotel: "", // Pode atualizar com o horário específico deste grupo
+          aeroParaHotel: "",
           hotelParaAero: ""
         },
         vooIda: {
@@ -160,7 +191,7 @@
         },
         vooVolta: {
           localizador: "NNVLVD",
-          data: "14 de Abril",
+          data: "12 de Abril",
           trechos: [
             { origem: "SDU", destino: "VCP", voo: "AD 4104", cia: "Azul", saida: "19:15", chegada: "20:45" },
             { origem: "VCP", destino: "BSB", voo: "AD 2652", cia: "Azul", saida: "22:45", chegada: "00:30 (+1d)" }
@@ -170,7 +201,7 @@
     ];
 
     // ==========================================
-    // DADOS DAS PLANILHAS (Hardcoded de Segurança)
+    // DADOS DAS PLANILHAS GERAIS (CSVs Mantidos Intactos)
     // ==========================================
     const DATA_DEMAIS_LOCALIDADES = `Nome,Localizador IDA,Localizador Volta,Horário onibus - saída rj
 Isabelle Fernandes Silva,AYOFAD,,
@@ -225,210 +256,365 @@ Raphael Pereira de Oliveira,PJDIFP,,
 Thaiene Vieira,PJDIFP,,
 Victor Vieira Fernandes da Cunha,PJDIFP,,
 Luana Cristina Bezerra Pereira,QLMASJ,QLMASJ,
-Raul Pordeus Cavalcante,QLMASJ,QLMASJ,
-João Pedro Vieira Franco,ISPGUO,,
-Raul Alencar de Sena,ISPGUO,,
-André Arruda,IWJEXA,IWJEXA,
-Diesley Moreira Meira,IWJEXA,IWJEXA,
-Edison Luis Paulini,IWJEXA,IWJEXA,
-Flávio Clivati Prado,IWJEXA,IWJEXA,
-Geovane Previdente Montezello,IWJEXA,IWJEXA,
-João Henrique de Freitas Antonelli,IWJEXA,IWJEXA,
-Maria Eduarda Pires Antão,IWJEXA,IWJEXA,
-Nasser Tanure,JM1RFG,,
-Leandro Rubim Magalhães,NTEXZI,OGHZGY,
-Matheus Perin Willrich,NTEXZI,OGHZGY,`;
+Raul Pordeus Cavalcante,QLMASJ,QLMASJ,`;
 
     const DATA_BRASILIA_GERAL = `,Nome,Confirmação,Voos,Horário onibus - saída de Gyn madrugada do dia 09/04,Horário do voo,Localizador ,Nº do voo ida,Companhia aerea ida,Nº do voo volta,Localizador ,Companhia aerea volta
-1,Barbara Martins Paulino,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-2,Barbara Silva Soares,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-3,Camila Emily Wanderley da Silva ,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-4,Daniel da Silva Machado ,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-5,Evander Robert Gonçalves Elias,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-6,Guilherme de Melo Godoy,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-7,João Paulo Borges Ala,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-8,Jonatas Lopes Alexandre da Silva,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-9,Lucas Duarte Orestes,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-10,Luiz Guilherme Jardim Borges,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-11,Luís Henrique Aires Souto,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-12,Narayana Menezes Moreira,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-13,Nathalia Rocha Filho,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL
-14,Flávio Domingos Cordeiro,True,BSB 14 pessoas,01:00:00,06:05:00,NNVLVD,2629,AZUL,2652,,AZUL`;
+1,Barbara Martins Paulino,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+2,Barbara Silva Soares,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+3,Camila Emily Wanderley da Silva ,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+4,Daniel da Silva Machado ,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+5,Evander Robert Gonçalves Elias,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+6,Guilherme de Melo Godoy,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+7,João Paulo Borges Ala,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+8,Jonatas Lopes Alexandre da Silva,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+9,Lucas Duarte Orestes,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+10,Luis Guilherme Jardim Borges,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+11,Luis Henrique Aires Souto,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+12,Narayana Menezes Moreira ,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+13,Rafaela Rocha Feijó,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+14,Flavio Domingos Cordeiro ,TRUE,BSB 14 pessoas,1:00:00 AM,6:05:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+,,,,,,,,,,,
+15,Andreia Luiza Aciole Vanderlei Pereira ,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,NNVLVD,2629,AZUL,2652,,AZUL
+16,Adalberto José da Rocha Neto,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+17,Caue de Oliveira Matos,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+18,Daniela de Araújo Cavalcante ,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+19,Dayanny Machado de Melo Moreira,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+20,Francinilda Alves Braz,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+21,Guilherme Martins Alencar Rodrigues,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+22,Gustavo Alves de Oliveira ,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+23,Kaique Rabelo Ribeiro,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+24,Larissa Vasconcelos Correia,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+25,Lilian Silva Araújo,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+26,Maria Lindalva dos Santos Silva,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+27,Matheus Malheiros Pinto,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+28,Raphael Pereira de Oliveira ,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+29,Thaiene Vieira,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+30,Victor Vieira Fernandes da Cunha,TRUE,BSB 16 pessoas,1:00:00 AM,5:35:00 AM,PJDIFP,2948,AZUL,2669,,AZUL 
+,,,,,,,,,,,
+31,Alyf Augusto da Silva Mendonça ,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+32,Anderson de Lima Bezerra,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,,,,,BNIZWQ,
+33,Anderson Rodrigues de Oliveira,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+34,Andressa Rodrigues Marques,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+35,Ariadne Sartin Carneiro,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+,Bruno Henrique Leal ,Não,,,,,,,,,
+36,Beatriz Salles Cotrim Riccioppo,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+37,Carla Djaicy da Rocha,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+38,Carlos Stuart Coronel Palma Junior,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+39,Cauê Filipe de Siqueira Pereira ,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+40,Daniela de Oliveira,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+41,Daniely Cristina Silva,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+42,Douglas Rodrigues Ribeiro,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+43,Emanuelly Castro Magalhães,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+44,Eric Cavalcante Panca,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+45,Gabriel Silveira Cunha Montserrate,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+46,Graciela Pereira Cardoso,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+47,Hemily Vitoria Silva Borges ,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+48,Isabella Eduarda Castro Tavares,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+49,João Felipe Peres Lima,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+50,Jordana Campos Vieira,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+51,Kenzo Pigosso Nakagawa,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+52,Luan Luciano de Carvalho ,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+53,Lucas Cavasin Oliveira,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+54,Lucas do Santos Sena,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+55,Maria Luiza dos Passos Siqueira,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+56,Mateus Adjuto Martins Graff,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+57,Miguel Perteson Souza Magalhães,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+,Elane Rodrigues Pereira ,Não,,,,,,,,,
+58,Rayssa Victoria da Fonseca Oliveira,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+59,Ricardo Borges Neres,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+60,Rodrigo Heringer Carmo,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+61,Samuel Damazio Da Silva Cunha,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+62,Thaís Paula de Lacerda Daltro de Almeida,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+63,Thamires Gomes Antunes,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+64,Thayna Azevedo Rosa,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+65,Verônica Monteiro dos Santos,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+66,Victor Hugo de Souza Prado ,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+67,Vinicius Toledo Sales,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+68,Vitor Manoel Alves de Souza,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+69,Wilker Alexandre dos Santos Fagundes,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+70,Witor Hugo Sousa Bergamasco Lomazzi,TRUE,BSB 40 pessoas,3:00:00 AM,8:15:00 AM,AKCTRZ,2963,AZUL,2652,,AZUL
+,,,,,,,,,,,
+71,Alan Dias Pimentel ,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+72,Alessandro Manoel Patrocinio,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+73,Ana Beatriz de Melo Lima,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+74,Ana Carolina Miranda de Souza,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+75,Ana Júlia Malta de Freitas,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+76,Armando Custodio Neto,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+77,Bianca Parreira Torres,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+78,Bolívar Luiz Pereira D Oliveira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+79,Bruna Lima Lopes,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+80,Caio Felipe Gonçalves Borba,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+81,Cairo Roberto dos Santos Batista Filho,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+82,Daniel Bandeira Azevedo e Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+83,Danilo Carlos de Oliveira Rosa,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+84,Ester Figueredo Nolêto,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+85,Giovanna Lissa Weber,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+86,Humberto Paschoaletti Júnior,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+87,Isabella Xavier Ferreira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+88,Isadora Alves Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+89,Jean Alexandre Pereira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+90,Jeniffer Nascimento da Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+91,Jéssica Lohanne Ribeiro,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+92,João Gabriel Ferreira Carvalho,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+93,Jonatas Silva de Lima,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+94,Joyce Helena Ferreira Moreno,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+95,Klívia Kethellen Ferreira Santana,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+96,Laura Gabrielly Lopes da Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+97,Luis Felipe Lemes Martins,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+98,Luiz Henrique Tomas Pedro Norberto,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+99,Manoel Sebastião Ferreira de Araújo Neto,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+100,Marcos Luiz Barbosa,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+101,Maria Eduarda Machado Seixo De Brito,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+102,Matheus Alves Borges,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+,Júlia Moura Rios,Não,,,,,,,,,
+103,Mirely Martinez Diaz,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+104,Nathálya Borges da Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+105,Paulo Henrique Nunes Carvalho,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+106,Paulo Victor Vargas De Almeida,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+107,Paulo Vitor Carvalho Vieira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+108,Rafael di Martini Jaser,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+109,Rafael Vitor Vieira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+110,Ramires Matias Naves Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+111,Roberta Scapini ,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+112,Ruiter Alves de Lima,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+113,Samara Araujo Da Silva,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+114,Stephanny Amazonas Viana,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+115,Thiago Cabral Canut Abrão,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+,Lísia Sant Ana Seabra e Sá,Não,,,,,,,,,
+116,Thiago Rodrigues Langsdorf,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+117,Victor de Souza Rocha,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+,Luana Cristina da Silva Andrade Santos,Não ,,,,,,,,,
+118,Victor Hugo Mariano Ribeiro,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+119,Vitoria Gabriella Turlher Da Silveira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+120,Vitória Reis Teixeira,TRUE,BSB 50 pesssoas,1:00:00 AM,5:25:00 AM,AJPCTM,2924,AZUL,4049,,AZUL
+,,,,,,,,,,,
+121,Adriano Luiz Odahara Umemura,TRUE,BSB 6 pessoas,1:00:00 AM,7:00:00 AM,FCIJNC,1800,GOL,1805,,GOL
+,Lucas Magalhães Silva,Não,,,,,,,,,
+122,Carlos Miguel Araujo de Lima,TRUE,BSB 6 pessoas,1:00:00 AM,7:00:00 AM,FCIJNC,1800,GOL,1805,,GOL
+123,Gabriel Bastos Dammann,TRUE,BSB 6 pessoas,1:00:00 AM,7:00:00 AM,FCIJNC,1800,GOL,1805,,GOL
+124,Geovany Santos Pereira,TRUE,BSB 6 pessoas,1:00:00 AM,7:00:00 AM,UOAITL,1800,GOL,1805,,GOL
+,Luiz Antonio Ferreira Araya,Não,,,,,,,,,
+,Marcelo Machado Fleury ,Não ,,,,,,,,,
+,Maximiliano Mateus Borges Carneiro,Não ,,,,,,,,,
+,Romilson Roque Soares,Não,,,,,,,,,
+,Luiz Otávio Visalli Gomes,Não ,,,,,,,,,
+,,,,,,,,,,,
+125,Bruna Roberta Andryeiak,TRUE,BSB ,1:00:00 AM,5:50:00 AM,BN8BNQ,2957,AZUL,2072,QLMASJ,GOL
+126,Debora Sanders Bolonhini,TRUE,BSB ,1:00:00 AM,5:50:00 AM,BN8BNQ,2957,AZUL,3992,KIQKDV,LATAM
+,",",,,,,,,,,,`;
 
     const DATA_AERO_HOTEL = `,Nome,Horário Onibus para hotel ,Localizador IDA ,Localizador  Volta
-1,Alan Dias Pimentel,10:00:00,AJPCTM,
-2,Alessandro Manoel Patrocinio,10:00:00,AJPCTM,
-3,Ana Beatriz de Melo Lima,10:00:00,AJPCTM,
-4,Ana Carolina Miranda de Souza,10:00:00,AJPCTM,
-5,Ana Júlia Malta de Freitas,10:00:00,AJPCTM,
-6,Armando Custodio Neto,10:00:00,AJPCTM,
-7,Bianca Parreira Torres,10:00:00,AJPCTM,
-8,Bolívar Luiz Pereira D Oliveira,10:00:00,AJPCTM,
-9,Bruna Lima Lopes,10:00:00,AJPCTM,
-10,Caio Felipe Gonçalves Borba,10:00:00,AJPCTM,
-11,Cairo Roberto dos Santos Batista Filho,10:00:00,AJPCTM,
-12,Daniel Bandeira Azevedo e Silva,10:00:00,AJPCTM,
-13,Danilo Carlos de Oliveira Rosa,10:00:00,AJPCTM,
-14,Ester Figueredo Nolêto,10:00:00,AJPCTM,
-15,Giovanna Lissa Weber,10:00:00,AJPCTM,
-16,Humberto Pachaulietti Júnior,10:00:00,AJPCTM,
-17,Isabella Xavier Ferreira,10:00:00,AJPCTM,
-18,Isadora Alves Silva,10:00:00,AJPCTM,
-19,Jean Alexandre Pereira,10:00:00,AJPCTM,
-20,Jeniffer Nascimento da Silva,10:00:00,AJPCTM,
-21,Jéssica Lohanne Ribeiro,10:00:00,AJPCTM,
-22,João Gabriel Ferreira Carvalho,10:00:00,AJPCTM,
-23,Jonatas Silva de Lima,10:00:00,AJPCTM,
-24,Joyca Helena Ferreira Moreno,10:00:00,AJPCTM,
-25,Klivia Kethellen Ferreira Santana,10:00:00,AJPCTM,
-26,Laura Gabrielly Lopes da Silva,10:00:00,AJPCTM,
-27,Luis Felipe Lemes Martins,10:00:00,AJPCTM,
-28,Luiz Henrique Tomaz Pedro Norberto,10:00:00,AJPCTM,
-29,Manoel Sebastião Ferreira de Araújo Neto,10:00:00,AJPCTM,
-30,Marcos Luiz Barbosa,10:00:00,AJPCTM,
-31,Maria Eduarda Machado Seixo De Brito,10:00:00,AJPCTM,
-32,Matheus Alves Borges,10:00:00,AJPCTM,
-33,Mirely Martinez Diaz,10:00:00,AJPCTM,
-34,Nathálya Borges da Silva,10:00:00,AJPCTM,
-35,Paulo Henrique Nunes Carvalho,10:00:00,AJPCTM,
-36,Paulo Victor Vargas De Almeida,10:00:00,AJPCTM,
-37,Paulo Vitor Carvalho Vieira,10:00:00,AJPCTM,
-38,Rafael di Martini Jaser,10:00:00,AJPCTM,
-39,Rafael Vitor Vieira,10:00:00,AJPCTM,
-40,Ramires Matias Naves Silva,10:00:00,AJPCTM,
-41,Roberta Scapin,10:00:00,AJPCTM,
-42,Ruiter Alves de Lima,10:00:00,AJPCTM,
-43,Samara Araújo Da Silva,10:00:00,AJPCTM,
-44,Stephany Amazonas Viana,10:00:00,AJPCTM,
-45,Thiago Cabral Canut Abrão,10:00:00,AJPCTM,
-46,Thiago Rodrigues Langsdorf,10:00:00,AJPCTM,
-47,Victor de Souza Rocha,10:00:00,AJPCTM,
-48,Victor Hugo Mariano Ribeiro,10:00:00,AJPCTM,
-49,Vitória Gabriella Turilier Da Silveira,10:00:00,AJPCTM,
-50,Vitória Reis Teixeira,10:00:00,AJPCTM,
-51,Alyf Augusto da Silva Mendonça,14:30:00,AKCTRZ,
-52,Anderson Rodrigues de Oliveira,14:30:00,AKCTRZ,
-53,Andressa Rodrigues Marques,14:30:00,AKCTRZ,
-54,Ariadne Sartin Carneiro,14:30:00,AKCTRZ,
-55,Beatriz Salles Cotrim Riccioppo,14:30:00,AKCTRZ,
-56,Carla Djalcy de Rocha,14:30:00,AKCTRZ,
-57,Carlos Stuart Coronel Palma Junior,14:30:00,AKCTRZ,
-58,Caué Filipe de Siqueira Pereira,14:30:00,AKCTRZ,
-59,Daniela de Oliveira,14:30:00,AKCTRZ,
-60,Daniely Cristina Silva,14:30:00,AKCTRZ,
-61,Douglas Rodrigues Ribeiro,14:30:00,AKCTRZ,
-62,Emanuelly Castro Magalhães,14:30:00,AKCTRZ,
-63,Eric Cavalcante Panca,14:30:00,AKCTRZ,
-64,Gabriel Silveira Cunha Montserrate,14:30:00,AKCTRZ,
-65,Graciela Pereira Cardoso,14:30:00,AKCTRZ,
-66,Hemily Vitória Silva Borges,14:30:00,AKCTRZ,
-67,Isabella Eduarda Castro Tavares,14:30:00,AKCTRZ,
-68,João Felipe Peres Lima,14:30:00,AKCTRZ,
-69,Jordana Campos Vieira,14:30:00,AKCTRZ,
-70,Kenzo Pigosso Nakagawa,14:30:00,AKCTRZ,
-71,Luan Luciano de Carvalho,14:30:00,AKCTRZ,
-72,Lucas Cavasin Oliveira,14:30:00,AKCTRZ,
-73,Lucas do Santos Sena,14:30:00,AKCTRZ,
-74,Maria Luiza dos Passos Siqueira,14:30:00,AKCTRZ,
-75,Mateus Adjuto Martins Graff,14:30:00,AKCTRZ,
-76,Miguel Perteson Souza Magalhães,14:30:00,AKCTRZ,
-77,Rayssa Victoria da Fonseca Oliveira,14:30:00,AKCTRZ,
-78,Ricardo Borges Neres,14:30:00,AKCTRZ,
-79,Rodrigo Heringer Carmo,14:30:00,AKCTRZ,
-80,Samuel Damazio Da Silva Cunha,14:30:00,AKCTRZ,
-81,Thaís Paula de Lacerda Dalto de Almeida,14:30:00,AKCTRZ,
-82,Thamires Gomes Antunes,14:30:00,AKCTRZ,
-83,Thayna Azevedo Rosa,14:30:00,AKCTRZ,
-84,Verónica Monteiro dos Santos,14:30:00,AKCTRZ,
-85,Victor Hugo de Souza Prado,14:30:00,AKCTRZ,
-86,Vinicius Toledo Sales,14:30:00,AKCTRZ,
-87,Vitor Manoel Alves de Souza,14:30:00,AKCTRZ,
-88,Wilker Alexandre dos Santos Fagundes,14:30:00,AKCTRZ,
-89,Wiltor Hugo Sousa Bergamasco Lomazzi,14:30:00,AKCTRZ,
-90,Isabelle Fernandes Silva,14:30:00,AYOFAD,
-91,Pedro Souto Shamá Santos,14:30:00,BKWPWZ,
-92,Bruna Roberta Andryeiak,10:00:00,BN8BNQ,QLMASJ
-93,Debora Sanders Bolonhini,10:00:00,BN8BNQ,KIQKDV
-96,Paulo Ramos de Brito Machado,10:00:00,FABQKY,
-97,Adriano Luiz Odahara Umemura,10:00:00,FCIJNC,
-98,Carlos Miguel Araujo de Lima,10:00:00,FCIJNC,
-99,Gabriel Bastos Dammann,10:00:00,FCIJNC,
-100,Gustavo Gomes Balbino,10:00:00,FCIJNC,
-101,Hiago Felipe de Araújo Sousa,10:00:00,FCIJNC,
-102,Thiago Nery de Oliveira Hernández,10:00:00,FCIJNC,
-103,Mauricio Pereira Imparato,10:00:00,GSSTUB,
-109,Abner Martins da Silva,10:00:00,HYSGGU,
-110,Arthur Berti Petersen Scholze,10:00:00,HYSGGU,
-111,Claúdio Junior da Silva,10:00:00,HYSGGU,
-112,Diana Luiza Horlle,10:00:00,HYSGGU,
-113,Rodrigo Ruas Rumi,10:00:00,HYSGGU,
-114,Erika Kettelyn Leite Barreto,14:30:00,IJCLNP,
-115,Gabriela Albuquerque Da Silva,14:30:00,IJCLNP,
-116,Iago Bier do Amaral,14:30:00,IJCLNP,
-117,Jefferson Rocha Silveira,14:30:00,IJCLNP,
-118,Leunam Souza De Jesus,14:30:00,IJCLNP,
-121,André Arruda,10:00:00,IWJEXA,IWJEXA
-122,Diesley Moreira Meira,10:00:00,IWJEXA,IWJEXA
-123,Edison Luis Paulini,10:00:00,IWJEXA,IWJEXA
-124,Flávio Clivati Prado,10:00:00,IWJEXA,IWJEXA
-125,Geovane Previdente Montezello,10:00:00,IWJEXA,IWJEXA
-126,João Henrique de Freitas Antonelli,10:00:00,IWJEXA,IWJEXA
-127,Maria Eduarda Pires Antão,10:00:00,IWJEXA,IWJEXA
-128,Nasser Tanure,10:00:00,JM1RFG,
-129,Arthur Miranda e Silva,10:00:00,KM2NUW,
-130,Bruno Avelar Barra,10:00:00,KM2NUW,
-131,Caio Rodrigues Borges,10:00:00,KM2NUW,
-132,Danilo Miranda Barbosa,10:00:00,KM2NUW,
-133,Hugo Maximiano Oliveira Jesus,10:00:00,KM2NUW,
-134,Érika Moura Félix Bergsten,14:30:00,KMJEEW,
-135,Antônio Nojikoski Júnior,14:30:00,NAHHOT,NAHHOT
-136,Barbara Martins Paulino,14:30:00,NNVLVD,
-137,Barbara Silva Soares,14:30:00,NNVLVD,
-138,Camila Emily Wanderley da Silva,14:30:00,NNVLVD,
-139,Daniel da Silva Machado,14:30:00,NNVLVD,
-140,Evander Robert Gonçalves Elias,14:30:00,NNVLVD,
-141,Guilherme de Melo Godoy,14:30:00,NNVLVD,
-142,João Paulo Borges Ala,14:30:00,NNVLVD,
-155,Jonatas Lopes Alexandre da Silva,14:30:00,NNVLVD,
-156,Lucas Duarte Orestes,14:30:00,NNVLVD,
-157,Luis Guilherme Jardim Borges,14:30:00,NNVLVD,
-158,Luis Henrique Aires Souto,14:30:00,NNVLVD,
-159,Narayana Menezes Moreira,14:30:00,NNVLVD,
-160,Rafaela Rocha Feijó,14:30:00,NNVLVD,
-161,Flávio Domingos Cordeiro,14:30:00,NNVLVD,
-162,Leandro Rubim Magalhães,10:00:00,NTEXZI,OGHZGY
-163,Matheus Perin Willrich,10:00:00,NTEXZI,OGHZGY
-164,Andreia Luiza Aciole Vanderlei Pereira,10:00:00,PJDIFP,
-165,Adalberto José da Rocha Neto,10:00:00,PJDIFP,
-166,Caue de Oliveira Matos,10:00:00,PJDIFP,
-167,Daniela de Araújo Cavalcante,10:00:00,PJDIFP,
-168,Dayanny Machado de Melo Moreira,10:00:00,PJDIFP,
-169,Francinilda Alves Braz,10:00:00,PJDIFP,
-170,Guilherme Martins Alencar Rodrigues,10:00:00,PJDIFP,
-171,Gustavo Alves de Oliveira,10:00:00,PJDIFP,
-172,Kaique Rabelo Ribeiro,10:00:00,PJDIFP,
-173,Larissa Vasconcelos Correia,10:00:00,PJDIFP,
-174,Lilian Silva Araújo,10:00:00,PJDIFP,
-175,Maria Lindalva dos Santos Silva,10:00:00,PJDIFP,
-176,Matheus Malheiros Pinto,10:00:00,PJDIFP,
-177,Raphael Pereira de Oliveira,10:00:00,PJDIFP,
-178,Thaiene Vieira,10:00:00,PJDIFP,
-179,Victor Vieira Fernandes da Cunha,10:00:00,PJDIFP,
-180,Luana Cristina Bezerra Pereira,10:00:00,QLMASJ,QLMASJ
-181,Raul Pordeus Cavalcante,10:00:00,QLMASJ,QLMASJ
-182,Adrielly Rosa Coutinho,14:30:00,QSSHYT,
-183,Edilson Elias Batista,14:30:00,QSSHYT,
-184,Eduardo Ribeiro Coelho,14:30:00,QSSHYT,
-185,Eria Cunha de Alencar,14:30:00,QSSHYT,
-186,Gabriela Rocha Ribeiro,14:30:00,QSSHYT,
-187,Giuliano de Brandi Godoy Milano,14:30:00,QSSHYT,
-188,Henrique Mena Marin Bulcão,14:30:00,QSSHYT,
-189,Lucas Cassimiro Vasconcelos,14:30:00,QSSHYT,
-190,Ricardo Carvalho Cassiano,14:30:00,QSSHYT,
-191,Geovany Santos Pereira,10:00:00,UOAITL,
-192,Beatriz Henriques de Nóbrega,14:30:00,WBIHWC,
-193,Brenner Nepomuceno,14:30:00,WBIHWC,
-194,Edson Carneiro Benati,14:30:00,WBIHWC,`;
+1,Alan Dias Pimentel ,10:00,AJPCTM,
+2,Alessandro Manoel Patrocinio,10:00,AJPCTM,
+3,Ana Beatriz de Melo Lima,10:00,AJPCTM,
+4,Ana Carolina Miranda de Souza,10:00,AJPCTM,
+5,Ana Júlia Malta de Freitas,10:00,AJPCTM,
+6,Armando Custodio Neto,10:00,AJPCTM,
+7,Bianca Parreira Torres,10:00,AJPCTM,
+8,Bolívar Luiz Pereira D Oliveira,10:00,AJPCTM,
+9,Bruna Lima Lopes,10:00,AJPCTM,
+10,Caio Felipe Gonçalves Borba,10:00,AJPCTM,
+11,Cairo Roberto dos Santos Batista Filho,10:00,AJPCTM,
+12,Daniel Bandeira Azevedo e Silva,10:00,AJPCTM,
+13,Danilo Carlos de Oliveira Rosa,10:00,AJPCTM,
+14,Ester Figueredo Nolêto,10:00,AJPCTM,
+15,Giovanna Lissa Weber,10:00,AJPCTM,
+16,Humberto Paschoaletti Júnior,10:00,AJPCTM,
+17,Isabella Xavier Ferreira,10:00,AJPCTM,
+18,Isadora Alves Silva,10:00,AJPCTM,
+19,Jean Alexandre Pereira,10:00,AJPCTM,
+20,Jeniffer Nascimento da Silva,10:00,AJPCTM,
+21,Jéssica Lohanne Ribeiro,10:00,AJPCTM,
+22,João Gabriel Ferreira Carvalho,10:00,AJPCTM,
+23,Jonatas Silva de Lima,10:00,AJPCTM,
+24,Joyce Helena Ferreira Moreno,10:00,AJPCTM,
+25,Klívia Kethellen Ferreira Santana,10:00,AJPCTM,
+26,Laura Gabrielly Lopes da Silva,10:00,AJPCTM,
+27,Luis Felipe Lemes Martins,10:00,AJPCTM,
+28,Luiz Henrique Tomas Pedro Norberto,10:00,AJPCTM,
+29,Manoel Sebastião Ferreira de Araújo Neto,10:00,AJPCTM,
+30,Marcos Luiz Barbosa,10:00,AJPCTM,
+31,Maria Eduarda Machado Seixo De Brito,10:00,AJPCTM,
+32,Matheus Alves Borges,10:00,AJPCTM,
+33,Mirely Martinez Diaz,10:00,AJPCTM,
+34,Nathálya Borges da Silva,10:00,AJPCTM,
+35,Paulo Henrique Nunes Carvalho,10:00,AJPCTM,
+36,Paulo Victor Vargas De Almeida,10:00,AJPCTM,
+37,Paulo Vitor Carvalho Vieira,10:00,AJPCTM,
+38,Rafael di Martini Jaser,10:00,AJPCTM,
+39,Rafael Vitor Vieira,10:00,AJPCTM,
+40,Ramires Matias Naves Silva,10:00,AJPCTM,
+41,Roberta Scapini ,10:00,AJPCTM,
+42,Ruiter Alves de Lima,10:00,AJPCTM,
+43,Samara Araujo Da Silva,10:00,AJPCTM,
+44,Stephanny Amazonas Viana,10:00,AJPCTM,
+45,Thiago Cabral Canut Abrão,10:00,AJPCTM,
+46,Thiago Rodrigues Langsdorf,10:00,AJPCTM,
+47,Victor de Souza Rocha,10:00,AJPCTM,
+48,Victor Hugo Mariano Ribeiro,10:00,AJPCTM,
+49,Vitoria Gabriella Turlher Da Silveira,10:00,AJPCTM,
+50,Vitória Reis Teixeira,10:00,AJPCTM,
+,,,,
+51,Alyf Augusto da Silva Mendonça ,14:30,AKCTRZ,
+52,Anderson Rodrigues de Oliveira,14:30,AKCTRZ,
+53,Andressa Rodrigues Marques,14:30,AKCTRZ,
+54,Ariadne Sartin Carneiro,14:30,AKCTRZ,
+55,Beatriz Salles Cotrim Riccioppo,14:30,AKCTRZ,
+56,Carla Djaicy da Rocha,14:30,AKCTRZ,
+57,Carlos Stuart Coronel Palma Junior,14:30,AKCTRZ,
+58,Cauê Filipe de Siqueira Pereira ,14:30,AKCTRZ,
+59,Daniela de Oliveira,14:30,AKCTRZ,
+60,Daniely Cristina Silva,14:30,AKCTRZ,
+61,Douglas Rodrigues Ribeiro,14:30,AKCTRZ,
+62,Emanuelly Castro Magalhães,14:30,AKCTRZ,
+63,Eric Cavalcante Panca,14:30,AKCTRZ,
+64,Gabriel Silveira Cunha Montserrate,14:30,AKCTRZ,
+65,Graciela Pereira Cardoso,14:30,AKCTRZ,
+66,Hemily Vitoria Silva Borges ,14:30,AKCTRZ,
+67,Isabella Eduarda Castro Tavares,14:30,AKCTRZ,
+68,João Felipe Peres Lima,14:30,AKCTRZ,
+69,Jordana Campos Vieira,14:30,AKCTRZ,
+70,Kenzo Pigosso Nakagawa,14:30,AKCTRZ,
+71,Luan Luciano de Carvalho ,14:30,AKCTRZ,
+72,Lucas Cavasin Oliveira,14:30,AKCTRZ,
+73,Lucas do Santos Sena,14:30,AKCTRZ,
+74,Maria Luiza dos Passos Siqueira,14:30,AKCTRZ,
+75,Mateus Adjuto Martins Graff,14:30,AKCTRZ,
+76,Miguel Perteson Souza Magalhães,14:30,AKCTRZ,
+77,Rayssa Victoria da Fonseca Oliveira,14:30,AKCTRZ,
+78,Ricardo Borges Neres,14:30,AKCTRZ,
+79,Rodrigo Heringer Carmo,14:30,AKCTRZ,
+80,Samuel Damazio Da Silva Cunha,14:30,AKCTRZ,
+81,Thaís Paula de Lacerda Daltro de Almeida,14:30,AKCTRZ,
+82,Thamires Gomes Antunes,14:30,AKCTRZ,
+83,Thayna Azevedo Rosa,14:30,AKCTRZ,
+84,Verônica Monteiro dos Santos,14:30,AKCTRZ,
+85,Victor Hugo de Souza Prado ,14:30,AKCTRZ,
+86,Vinicius Toledo Sales,14:30,AKCTRZ,
+87,Vitor Manoel Alves de Souza,14:30,AKCTRZ,
+88,Wilker Alexandre dos Santos Fagundes,14:30,AKCTRZ,
+89,Witor Hugo Sousa Bergamasco Lomazzi,14:30,AKCTRZ,
+,,,,
+90,Isabelle Fernandes Silva,14:30,AYOFAD,
+,,,,
+91,Pedro Souto Shamá Santos,14:30,BKWPWZ,
+,,,,
+92,Bruna Roberta Andryeiak,10:00,BN8BNQ,QLMASJ
+93,Debora Sanders Bolonhini,10:00,BN8BNQ,KIQKDV
+,,,,
+94,Anderson de Lima Bezerra,-,BNIZWQ,
+,,,,
+95,Leandra de Paula Morais Silva,-,DOWAQQ,
+,,,,
+96,Paulo Ramos de Brito Machado,10:00,FABQKY,
+,,,,
+97,Adriano Luiz Odahara Umemura,10:00,FCIJNC,
+98,Carlos Miguel Araujo de Lima,10:00,FCIJNC,
+99,Gabriel Bastos Dammann,10:00,FCIJNC,
+100,Gustavo Gomes Balbino,10:00,FCIJNC,
+101,Hiago Felipe de Araújo Sousa,10:00,FCIJNC,
+102,Thiago Nery de Oliveira Hernández,10:00,FCIJNC,
+,,,,
+103,Mauricio Pereira Imparato ,10:00,GSSTUB,
+,,,,
+104,Bruna Alencar Rodrigues,-,HIDTTU,CGS45F
+105,Julhia Vieira dos Santos,-,HIDTTU,
+106,Kaique Maciel Castro,-,HIDTTU,
+107,Lídia Sousa Magalhães Alves,-,HIDTTU,CGS45F
+108,Marcela Luzinete Lima da Silva,-,HIDTTU,
+,,,,
+109,Abner Martins da Silva,10:00,HYSGGU,
+110,Arthur Berti Petersen Scholze,10:00,HYSGGU,
+111,Claúdio Junior da Silva,10:00,HYSGGU,
+112,Diana Luiza Horlle,10:00,HYSGGU,
+113,Rodrigo Ruas Rumi,10:00,HYSGGU,
+,,,,
+114,Erika Kettelyn Leite Barreto,14:30,IJCLNP,
+115,Gabriela Albuquerque Da Silva,14:30,IJCLNP,
+116,Iago Bier do Amaral,14:30,IJCLNP,
+117,Jefferson Rocha Silveira,14:30,IJCLNP,
+118,Leunam Souza De Jesus,14:30,IJCLNP,
+,,,,
+119,João Pedro Vieira Franco ,-,ISPGUO,
+120,Raul Alencar de Sena ,-,ISPGUO,
+,,,,
+121,André Arruda,10:00,IWJEXA,IWJEXA
+122,Diesley Moreira Meira,10:00,IWJEXA,
+123,Edison Luís Paulini,10:00,IWJEXA,
+124,Flávio Clivati Prado,10:00,IWJEXA,
+125,Geovane Previdente Montezello,10:00,IWJEXA,
+126,João Henrique de Freitas Antonelli,10:00,IWJEXA,
+127,Maria Eduarda Pires Antão,10:00,IWJEXA,
+,,,,
+128,Nasser Tanure,10:00,JM1RFG,
+,,,,
+129,Arthur Miranda e Silva,10:00,KM2NUW,
+130,Bruno Avelar Barra,10:00,KM2NUW,
+131,Caio Rodrigues Borges,10:00,KM2NUW,
+132,Danilo Miranda Barbosa,10:00,KM2NUW,
+133,Hugo Maximiano Oliveira Jesus,10:00,KM2NUW,
+,,,,
+134,Érika Moura Félix Bergsten,14:30,KMJEEW,
+,,,,
+135,Antônio Nojikoski Júnior,14:30,NAHHOT,NAHHOT
+,,,,
+136,Barbara Martins Paulino,14:30,NNVLVD,
+137,Barbara Silva Soares,14:30,NNVLVD,
+138,Camila Emily Wanderley da Silva ,14:30,NNVLVD,
+139,Daniel da Silva Machado ,14:30,NNVLVD,
+140,Evander Robert Gonçalves Elias,14:30,NNVLVD,
+141,Guilherme de Melo Godoy,14:30,NNVLVD,
+142,João Paulo Borges Ala,14:30,NNVLVD,
+155,Jonatas Lopes Alexandre da Silva,14:30,NNVLVD,
+156,Lucas Duarte Orestes,14:30,NNVLVD,
+157,Luis Guilherme Jardim Borges,14:30,NNVLVD,
+158,Luis Henrique Aires Souto,14:30,NNVLVD,
+159,Narayana Menezes Moreira ,14:30,NNVLVD,
+160,Rafaela Rocha Feijó,14:30,NNVLVD,
+161,Flavio Domingos Cordeiro ,14:30,NNVLVD,
+,,,,
+162,Leandro Rubim Magalhães,10:00,NTEXZI,OGHZGY
+163,Matheus Perin Willrich,10:00,NTEXZI,OGHZGY
+,,,,
+164,Andreia Luiza Aciole Vanderlei Pereira ,10:00,PJDIFP,
+165,Adalberto José da Rocha Neto,10:00,PJDIFP,
+166,Caue de Oliveira Matos,10:00,PJDIFP,
+167,Daniela de Araújo Cavalcante ,10:00,PJDIFP,
+168,Dayanny Machado de Melo Moreira,10:00,PJDIFP,
+169,Francinilda Alves Braz,10:00,PJDIFP,
+170,Guilherme Martins Alencar Rodrigues,10:00,PJDIFP,
+171,Gustavo Alves de Oliveira ,10:00,PJDIFP,
+172,Kaique Rabelo Ribeiro,10:00,PJDIFP,
+173,Larissa Vasconcelos Correia,10:00,PJDIFP,
+174,Lilian Silva Araújo,10:00,PJDIFP,
+175,Maria Lindalva dos Santos Silva,10:00,PJDIFP,
+176,Matheus Malheiros Pinto,10:00,PJDIFP,
+177,Raphael Pereira de Oliveira ,10:00,PJDIFP,
+178,Thaiene Vieira,10:00,PJDIFP,
+179,Victor Vieira Fernandes da Cunha,10:00,PJDIFP,
+,,,,
+180,Luana Cristina Bezerra Pereira ,10:00,QLMASJ,QLMASJ
+181,Raul Pordeus Cavalcante,10:00,QLMASJ,QLMASJ
+,,,,
+182,Adrielly Rosa Coutinho,14:30,QSSHYT,
+183,Edilson Elias Batista,14:30,QSSHYT,
+184,Eduardo Ribeiro Coelho,14:30,QSSHYT,
+185,Eria Cunha de Alencar,14:30,QSSHYT,
+186,Gabriela Rocha Ribeiro ,14:30,QSSHYT,
+187,Giuliano de Brandi Godoy Milano,14:30,QSSHYT,
+188,Henrique Mena Marin Bulcao,14:30,QSSHYT,
+189,Lucas Cassimiro Vasconcelos ,14:30,QSSHYT,
+190,Ricardo Carvalho Cassiano ,14:30,QSSHYT,
+,,,,
+191,Geovany Santos Pereira,10:00,UOAITL,
+,,,,
+192,Beatriz Henriques de Nóbrega,14:30,WBIHWC,
+193,Brenner Nepomuceno ,14:30,WBIHWC,
+194,Edson Carneiro Benati ,14:30,WBIHWC,
+,,,,
+,,,,
+,,,,
+,",",,,`;
 
     // ==========================================
     // LÓGICA E ESTADO
@@ -436,8 +622,22 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
     let database = [];
     let selectedUser = null;
 
+    const leftPanel = document.getElementById('leftPanel');
+    const rightPanel = document.getElementById('rightPanel');
+
+    // Funções para gerir o layout em Mobile
+    window.showMobileTicket = () => {
+      leftPanel.classList.add('max-lg:hidden');
+      rightPanel.classList.remove('max-lg:hidden');
+    };
+
+    window.hideMobileTicket = () => {
+      leftPanel.classList.remove('max-lg:hidden');
+      rightPanel.classList.add('max-lg:hidden');
+    };
+
     const normalizeName = (name) => {
-      if (!name) return '';
+      if (!name || name === ',') return '';
       return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     };
 
@@ -465,16 +665,21 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
       return -1;
     };
 
-    // Inicialização da Base Mesclando CSVs Antigos com os Detalhados
+    // Inicialização da Base Integrando CSVs com os Detalhados
     const initDatabase = () => {
       const usersMap = new Map();
 
       const getUserObj = (rawName) => {
-        const key = normalizeName(rawName);
+        if (!rawName) return null;
+        const cleanName = rawName.trim();
+        // Remove lixo / passageiros chamados apenas ','
+        if (cleanName === '' || cleanName === ',') return null; 
+        
+        const key = normalizeName(cleanName);
         if (!key) return null;
         if (!usersMap.has(key)) {
           usersMap.set(key, { 
-            nomeOriginal: rawName, key: key, vooIda: {}, vooVolta: {}, onibus: {} 
+            nomeOriginal: cleanName, key: key, vooIda: {}, vooVolta: {}, onibus: {} 
           });
         }
         return usersMap.get(key);
@@ -538,6 +743,35 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
       });
 
       database = Array.from(usersMap.values()).sort((a, b) => a.nomeOriginal.localeCompare(b.nomeOriginal));
+      renderAllUsersList(); // Renderiza a lista de todos os colaboradores inicial
+    };
+
+    // ==========================================
+    // RENDERIZAÇÃO DA LISTA COMPLETA
+    // ==========================================
+    const renderAllUsersList = () => {
+      const container = document.getElementById('allUsersList');
+      let currentLetter = '';
+      let listHtml = '';
+
+      database.forEach(user => {
+        const initial = user.nomeOriginal.charAt(0).toUpperCase();
+        if (initial !== currentLetter) {
+          currentLetter = initial;
+          listHtml += `
+            <div class="sticky top-0 bg-white/95 backdrop-blur px-6 py-2 mt-2 font-anek font-bold text-auvp text-sm z-10 shadow-sm shadow-gray-50 uppercase">
+              ${currentLetter}
+            </div>
+          `;
+        }
+        listHtml += `
+          <button onclick="selectUser('${user.key}')" class="w-full text-left px-6 py-3.5 hover:bg-green-50 flex items-center justify-between border-b border-gray-50 last:border-none transition-colors group">
+            <span class="font-roboto font-medium text-gray-700 group-hover:text-auvp">${user.nomeOriginal}</span>
+            <i class="ph ph-caret-right text-gray-300 group-hover:text-auvp"></i>
+          </button>
+        `;
+      });
+      container.innerHTML = listHtml;
     };
 
     // ==========================================
@@ -562,9 +796,9 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
 
       if (filtered.length > 0) {
         dropdown.innerHTML = filtered.map(user => `
-          <button onclick="selectUser('${user.key}')" class="w-full text-left px-5 py-4 hover:bg-gray-50 flex items-center justify-between border-b border-gray-100 last:border-0 transition-colors">
-            <span class="font-roboto font-normal text-gray-800">${user.nomeOriginal}</span>
-            <i class="ph ph-caret-right text-gray-300"></i>
+          <button onclick="selectUser('${user.key}')" class="w-full text-left px-5 py-4 hover:bg-gray-50 flex items-center justify-between border-b border-gray-100 last:border-0 transition-colors group">
+            <span class="font-roboto font-medium text-gray-800 group-hover:text-auvp">${user.nomeOriginal}</span>
+            <i class="ph ph-caret-right text-gray-300 group-hover:text-auvp"></i>
           </button>
         `).join('');
         dropdown.classList.remove('hidden');
@@ -577,6 +811,7 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
     const showEmptyState = () => {
       ticketContainer.classList.add('hidden');
       emptyState.classList.remove('hidden');
+      emptyState.classList.add('flex');
       selectedUser = null;
     };
 
@@ -584,7 +819,9 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
       selectedUser = database.find(u => u.key === key);
       searchInput.value = selectedUser.nomeOriginal;
       dropdown.classList.add('hidden');
+      clearBtn.classList.remove('hidden');
       renderTicket(selectedUser);
+      window.showMobileTicket(); // Muda para o painel direito em Mobile
     };
 
     const clearSearch = () => {
@@ -593,40 +830,49 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
       clearBtn.classList.add('hidden');
       showEmptyState();
       searchInput.focus();
+      window.hideMobileTicket(); // Volta para o painel esquerdo em Mobile
     };
 
     // ==========================================
-    // TEMPLATE DO TICKET (Design System AUVP + Suporte a Conexões)
+    // TEMPLATE DO TICKET (Design System AUVP + Cabeçalhos Sofisticados)
     // ==========================================
     const renderTicket = (user) => {
       emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
       
       let html = `
-        <div class="mb-5">
-          <p class="font-roboto font-light text-xs text-gray-400 uppercase tracking-widest mb-1">Passageiro</p>
-          <h2 class="font-anek font-bold text-2xl text-auvp leading-tight">${user.nomeOriginal}</h2>
+        <!-- Botão Voltar (Apenas Mobile) -->
+        <button onclick="window.hideMobileTicket()" class="lg:hidden mb-4 flex items-center gap-2 text-gray-500 hover:text-auvp font-medium transition-colors">
+          <i class="ph ph-arrow-left text-xl"></i> Voltar à lista
+        </button>
+
+        <div class="mb-5 bg-auvp-light p-5 rounded-2xl border border-green-100/60 relative overflow-hidden shadow-sm">
+          <p class="font-roboto font-medium text-xs text-auvp uppercase tracking-widest mb-1 relative z-10 text-left">Cartão de Embarque</p>
+          <h2 class="font-anek font-bold text-2xl text-auvp-dark leading-tight relative z-10 text-left">${user.nomeOriginal}</h2>
         </div>
         <div class="space-y-4">
       `;
 
-      const createStep = (icon, title, detailsHtml) => `
-        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 shadow-sm relative group overflow-hidden">
-          <div class="absolute left-0 top-0 bottom-0 w-1 bg-auvp opacity-80"></div>
+      const createStep = (icon, title, detailsHtml, badge) => `
+        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative group overflow-hidden">
+          <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-auvp opacity-90 rounded-l-2xl"></div>
           <div class="flex gap-4 items-start">
-            <div class="bg-green-50 w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-auvp">
-              <i class="ph ${icon} text-xl"></i>
+            <div class="bg-green-50 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-auvp shadow-sm">
+              <i class="ph ${icon} text-2xl"></i>
             </div>
             <div class="flex-1 w-full overflow-hidden">
-              <h3 class="font-anek font-semibold text-[17px] text-gray-800 leading-none mb-3">${title}</h3>
+              <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-50">
+                 <h3 class="font-anek font-bold text-[18px] text-gray-800 leading-none">${title}</h3>
+                 ${badge ? `<span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">${badge}</span>` : ''}
+              </div>
               ${detailsHtml}
             </div>
           </div>
         </div>
       `;
 
-      // Helper para montar HTML de voos com ou sem "Trechos Detalhados"
       const renderFlightDetails = (voo) => {
-        // Se tiver o formato novo detalhado (com array de conexões)
+        // Formato detalhado (com array de trechos/ligações)
         if (voo.trechos && voo.trechos.length > 0) {
           let detalhes = `
             <div class="flex justify-between items-center mb-3">
@@ -657,24 +903,24 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
           return detalhes;
         } 
         
-        // Se for o formato antigo (CSV Simples)
-        let detalhes = `<div class="flex items-center justify-between gap-2 border-b border-gray-200 border-dashed pb-2">`;
+        // Formato antigo (CSV Simples)
+        let detalhes = `<div class="flex items-center justify-between gap-2">`;
         detalhes += `<div>
-            <p class="font-roboto font-light text-xs text-gray-500 uppercase">Localizador</p>
-            <p class="font-anek font-bold text-xl text-auvp uppercase tracking-wide mt-0.5">${voo.localizador || '---'}</p>
+            <p class="font-roboto font-light text-[11px] text-gray-500 uppercase tracking-wide">Localizador</p>
+            <p class="font-anek font-bold text-xl text-auvp uppercase tracking-wider mt-0.5">${voo.localizador || '---'}</p>
           </div>`;
         if (voo.horario) {
           detalhes += `<div class="text-right">
-            <p class="font-roboto font-light text-xs text-gray-500 uppercase">Horário</p>
-            <p class="font-roboto font-medium text-gray-800 flex items-center justify-end gap-1 mt-0.5">
+            <p class="font-roboto font-light text-[11px] text-gray-500 uppercase tracking-wide">Horário</p>
+            <p class="font-roboto font-semibold text-gray-800 flex items-center justify-end gap-1 mt-0.5">
               <i class="ph ph-clock text-gray-400"></i> ${voo.horario}
             </p>
           </div>`;
         }
         detalhes += `</div>`;
         if (voo.cia || voo.numero) {
-          detalhes += `<div class="mt-2">
-            <p class="font-roboto font-light text-xs text-gray-500 uppercase">Voo / Cia Aérea</p>
+          detalhes += `<div class="mt-3 pt-2 border-t border-dashed border-gray-100">
+            <p class="font-roboto font-light text-[11px] text-gray-500 uppercase tracking-wide">Voo / Cia Aérea</p>
             <p class="font-roboto font-medium text-gray-800 mt-0.5">${voo.cia || ''} ${voo.numero ? `(${voo.numero})` : ''}</p>
           </div>`;
         }
@@ -683,63 +929,73 @@ Matheus Perin Willrich,NTEXZI,OGHZGY,`;
 
       // 1. Ônibus GYN -> Aero
       if (user.onibus?.gynParaAero) {
-        html += createStep('ph-bus', 'Ônibus de Origem', `
+        html += createStep('ph-bus', 'Transporte de Origem', `
           <div>
-            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5">Partida p/ Aeroporto</p>
-            <p class="font-roboto font-medium text-gray-800 flex items-center gap-1.5">
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5 tracking-wide">Partida p/ Aeroporto</p>
+            <p class="font-roboto font-semibold text-gray-800 flex items-center gap-1.5">
               <i class="ph ph-clock text-auvp"></i> ${user.onibus.gynParaAero}
             </p>
+            
+            <div class="mt-3 bg-gray-50 border border-gray-100 rounded-lg p-3 flex items-start gap-2.5">
+               <i class="ph ph-info text-auvp text-xl mt-0.5"></i>
+               <p class="font-roboto text-[13px] text-gray-600 leading-relaxed">
+                 O ônibus parte do <strong>escritório da AUVP</strong>. Por favor, chegue com a devida antecedência.
+               </p>
+            </div>
           </div>
-        `);
+        `, 'TERRESTRE');
       }
 
       // 2. Voo de Ida
       if (user.vooIda?.localizador || user.vooIda?.horario || user.vooIda?.trechos) {
-        html += createStep('ph-airplane-takeoff', 'Voo de Ida', renderFlightDetails(user.vooIda));
+        html += createStep('ph-airplane-takeoff', 'Voo de Partida', renderFlightDetails(user.vooIda), 'AÉREO');
       }
 
       // 3. Transfer Chegada
       if (user.onibus?.aeroParaHotel) {
-        html += createStep('ph-map-pin', 'Transfer Chegada', `
+        html += createStep('ph-map-pin', 'Transfer de Chegada', `
           <div>
-            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5">Aeroporto ➔ Hotel (RJ)</p>
-            <p class="font-roboto font-medium text-gray-800 flex items-center gap-1.5">
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5 tracking-wide">Aeroporto ➔ Hotel (RJ)</p>
+            <p class="font-roboto font-semibold text-gray-800 flex items-center gap-1.5">
               <i class="ph ph-clock text-auvp"></i> ${user.onibus.aeroParaHotel}
             </p>
           </div>
-        `);
+        `, 'TERRESTRE');
       }
 
       // 4. Transfer Retorno
       if (user.onibus?.hotelParaAero) {
-        html += createStep('ph-map-pin', 'Transfer Retorno', `
+        html += createStep('ph-map-pin', 'Transfer de Retorno', `
           <div>
-            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5">Hotel (RJ) ➔ Aeroporto</p>
-            <p class="font-roboto font-medium text-gray-800 flex items-center gap-1.5">
+            <p class="font-roboto font-light text-xs text-gray-500 uppercase mb-0.5 tracking-wide">Hotel (RJ) ➔ Aeroporto</p>
+            <p class="font-roboto font-semibold text-gray-800 flex items-center gap-1.5">
               <i class="ph ph-clock text-auvp"></i> ${user.onibus.hotelParaAero}
             </p>
           </div>
-        `);
+        `, 'TERRESTRE');
       }
 
       // 5. Voo de Volta
       if (user.vooVolta?.localizador || user.vooVolta?.trechos) {
-        html += createStep('ph-airplane-landing', 'Voo de Volta', renderFlightDetails(user.vooVolta));
+        html += createStep('ph-airplane-landing', 'Voo de Regresso', renderFlightDetails(user.vooVolta), 'AÉREO');
       }
 
       // Fallback Vazio
       if (Object.keys(user.vooIda).length === 0 && Object.keys(user.vooVolta).length === 0 && Object.keys(user.onibus).length === 0) {
         html += `
-          <div class="text-center p-6 bg-gray-50 rounded-xl border border-gray-100">
-            <p class="font-roboto text-gray-500 text-sm">Nenhum detalhe de viagem localizado ainda.</p>
+          <div class="text-center p-8 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+               <i class="ph ph-warning-circle text-3xl text-gray-400"></i>
+            </div>
+            <p class="font-roboto text-gray-500 text-sm">Nenhum detalhe de viagem localizado para este passageiro até ao momento.</p>
           </div>
         `;
       }
 
-      // Botão Limpar Busca (Padrão Arredondado AUVP)
+      // Botão Limpar Pesquisa (Apenas Mobile, porque no Desktop basta clicar num nome na lista ao lado)
       html += `
-        <button onclick="clearSearch()" class="w-full mt-6 bg-auvp hover:bg-auvp-dark text-white rounded-xl py-3.5 font-anek font-semibold text-lg flex items-center justify-center gap-2 transition-colors shadow-md">
-          <i class="ph ph-magnifying-glass"></i> Nova Consulta
+        <button onclick="clearSearch()" class="lg:hidden w-full mt-2 bg-auvp hover:bg-auvp-dark text-white rounded-xl py-3.5 font-anek font-semibold text-lg flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98]">
+          <i class="ph ph-magnifying-glass"></i> Nova Pesquisa
         </button>
       </div>`;
 
